@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#5bb8e8">
+
+    <title>Basket Stats</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Basket Stats">
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="brand">BASKET STATS</div>
+
+    <div class="quarter-box">
+        <span>PERIODO</span>
+        <strong id="quarterDisplay">1°</strong>
+    </div>
+
+    <div class="scoreboard">
+
+        <div class="score-team">
+            <span id="scoreHomeName">CASA</span>
+            <strong id="scoreHome">0</strong>
+        </div>
+
+        <div class="score-separator">-</div>
+
+        <div class="score-team">
+            <span id="scoreAwayName">TRASFERTA</span>
+            <strong id="scoreAway">0</strong>
+        </div>
+
+    </div>
+
+    <div class="top-actions">
+        <button id="previousQuarter">‹</button>
+        <button id="nextQuarter">›</button>
+        <button id="exportPdf" class="export-button">ESPORTA PDF</button>
+        <button id="newGame" class="danger-button">NUOVA PARTITA</button>
+    </div>
+
+</header>
+
+
+<main>
+
+    <!-- ================= CASA ================= -->
+
+    <section class="team-section">
+
+        <div class="team-header">
+
+            <div class="team-title-area">
+
+                <input
+                    type="text"
+                    id="homeTeamName"
+                    value="CASA"
+                    maxlength="30"
+                >
+
+                <span class="team-label">CASA</span>
+
+            </div>
+
+            <div class="team-score">
+                <span>PUNTI</span>
+                <strong id="homeScore">0</strong>
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table class="stats-table">
+
+                <thead>
+
+                    <tr>
+                        <th>GIOCATORE</th>
+                        <th>MIN</th>
+                        <th>PTS</th>
+                        <th>2P</th>
+                        <th>2PA</th>
+                        <th>3P</th>
+                        <th>3PA</th>
+                        <th>TL</th>
+                        <th>TLA</th>
+                        <th>REB</th>
+                        <th>AST</th>
+                        <th>STL</th>
+                        <th>BLK</th>
+                        <th>TO</th>
+                        <th>PF</th>
+                        <th>CP</th>
+                        <th>PPR</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="homePlayersBody"></tbody>
+
+            </table>
+
+        </div>
+
+        <button id="addHomePlayer" class="add-player-button">
+            + AGGIUNGI GIOCATORE
+        </button>
+
+    </section>
+
+
+
+    <!-- ================= TRASFERTA ================= -->
+
+    <section class="team-section">
+
+        <div class="team-header">
+
+            <div class="team-title-area">
+
+                <input
+                    type="text"
+                    id="awayTeamName"
+                    value="TRASFERTA"
+                    maxlength="30"
+                >
+
+                <span class="team-label">TRASFERTA</span>
+
+            </div>
+
+            <div class="team-score">
+                <span>PUNTI</span>
+                <strong id="awayScore">0</strong>
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table class="stats-table">
+
+                <thead>
+
+                    <tr>
+                        <th>GIOCATORE</th>
+                        <th>MIN</th>
+                        <th>PTS</th>
+                        <th>2P</th>
+                        <th>2PA</th>
+                        <th>3P</th>
+                        <th>3PA</th>
+                        <th>TL</th>
+                        <th>TLA</th>
+                        <th>REB</th>
+                        <th>AST</th>
+                        <th>STL</th>
+                        <th>BLK</th>
+                        <th>TO</th>
+                        <th>PF</th>
+                        <th>CP</th>
+                        <th>PPR</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="awayPlayersBody"></tbody>
+
+            </table>
+
+        </div>
+
+        <button id="addAwayPlayer" class="add-player-button">
+            + AGGIUNGI GIOCATORE
+        </button>
+
+    </section>
+
+</main>
+
+
+
+<!-- ================= PANNELLO GIOCATORE ================= -->
+
+<div id="playerPanel" class="player-panel hidden">
+
+    <div class="player-panel-header">
+
+        <div>
+            <span id="selectedPlayerTeam"></span>
+            <h2 id="selectedPlayerName">Giocatore</h2>
+        </div>
+
+        <button id="closePlayerPanel" class="close-button">×</button>
+
+    </div>
+
+
+    <div class="player-status">
+
+        <div>
+            <span class="status-dot" id="statusDot"></span>
+            <strong id="playerStatusText">PANCHINA</strong>
+        </div>
+
+        <button id="togglePlayerStatus">
+            ENTRA IN CAMPO
+        </button>
+
+    </div>
+
+
+    <div class="minutes-section">
+
+        <label for="minutesInput">
+            MINUTI GIOCATI
+        </label>
+
+        <div class="minutes-controls">
+
+            <input
+                type="number"
+                id="minutesInput"
+                min="0"
+                max="60"
+                step="0.1"
+                value="0"
+            >
+
+            <button id="saveMinutes">SALVA</button>
+
+        </div>
+
+    </div>
+
+
+    <div class="actions-title">
+        STATISTICHE
+    </div>
+
+
+    <div class="action-grid">
+
+        <button class="stat-action points-one" data-stat="onePoint">
+            +1
+            <small>TL REALIZZATO</small>
+        </button>
+
+        <button class="stat-action points-two" data-stat="twoPoint">
+            +2
+            <small>CANESTRO</small>
+        </button>
+
+        <button class="stat-action points-three" data-stat="threePoint">
+            +3
+            <small>TRIPLA</small>
+        </button>
+
+        <button class="stat-action" data-stat="missTwo">
+            2PA
+            <small>ERRORE</small>
+        </button>
+
+        <button class="stat-action" data-stat="missThree">
+            3PA
+            <small>ERRORE</small>
+        </button>
+
+        <button class="stat-action" data-stat="missFT">
+            TLA
+            <small>ERRORE</small>
+        </button>
+
+        <button class="stat-action" data-stat="rebounds">REB</button>
+        <button class="stat-action" data-stat="assists">AST</button>
+        <button class="stat-action" data-stat="steals">STL</button>
+        <button class="stat-action" data-stat="blocks">BLK</button>
+        <button class="stat-action" data-stat="turnovers">TO</button>
+        <button class="stat-action" data-stat="fouls">PF</button>
+
+    </div>
+
+
+    <div class="special-actions">
+
+        <button id="fastBreakButton">
+            CONTROPIEDE
+        </button>
+
+        <button id="pointsOffTurnoverButton">
+            PALLA RECUPERATA
+        </button>
+
+    </div>
+
+
+    <button id="removePlayer" class="remove-player-button">
+        ELIMINA GIOCATORE
+    </button>
+
+</div>
+
+
+
+<!-- ================= SCELTA CANESTRO ================= -->
+
+<div id="scoringChoiceOverlay" class="overlay hidden">
+
+    <div class="choice-modal">
+
+        <div class="modal-header">
+
+            <div>
+                <span>TIPO DI CANESTRO</span>
+                <h2 id="scoringChoiceTitle">+2</h2>
+            </div>
+
+            <button id="cancelScoringChoice" class="close-button">
+                ×
+            </button>
+
+        </div>
+
+
+        <p>Come sono stati realizzati i punti?</p>
+
+
+        <div class="choice-buttons">
+
+            <button id="normalScoreButton" class="choice-button normal">
+                <strong>NORMALE</strong>
+                <small>Canestro su azione normale</small>
+            </button>
+
+            <button id="fastBreakScoreButton" class="choice-button fast">
+                <strong>CONTROPIEDE</strong>
+                <small>Punti in contropiede</small>
+            </button>
+
+            <button id="turnoverScoreButton" class="choice-button turnover">
+                <strong>PALLA RECUPERATA</strong>
+                <small>Punti dopo recupero palla</small>
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ================= PUNTI SPECIALI ================= -->
+
+<div id="specialPointsOverlay" class="overlay hidden">
+
+    <div class="choice-modal">
+
+        <div class="modal-header">
+
+            <div>
+                <span>AGGIUNGI PUNTI</span>
+                <h2 id="specialPointsTitle">
+                    CONTROPIEDE
+                </h2>
+            </div>
+
+            <button id="cancelSpecialPoints" class="close-button">
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="special-point-buttons">
+
+            <button data-special-points="1">+1</button>
+            <button data-special-points="2">+2</button>
+            <button data-special-points="3">+3</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ================= AGGIUNTA GIOCATORE ================= -->
+
+<div id="addPlayerModal" class="overlay hidden">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <h2>AGGIUNGI GIOCATORE</h2>
+
+            <button id="cancelAddPlayer" class="close-button">
+                ×
+            </button>
+
+        </div>
+
+        <p id="modalTeamName">CASA</p>
+
+
+        <label for="newPlayerNumber">
+            NUMERO
+        </label>
+
+        <input
+            type="number"
+            id="newPlayerNumber"
+            min="0"
+            max="99"
+            placeholder="Es. 23"
+        >
+
+
+        <label for="newPlayerName">
+            NOME GIOCATORE
+        </label>
+
+        <input
+            type="text"
+            id="newPlayerName"
+            maxlength="40"
+            placeholder="Es. Mario Rossi"
+        >
+
+
+        <button id="confirmAddPlayer" class="confirm-button">
+            AGGIUNGI
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- ================= CONFERMA ================= -->
+
+<div id="confirmationOverlay" class="overlay hidden">
+
+    <div class="choice-modal confirmation-modal">
+
+        <h2 id="confirmationTitle">
+            SEI SICURO?
+        </h2>
+
+        <p id="confirmationText"></p>
+
+        <div class="confirmation-buttons">
+
+            <button id="confirmationCancel">
+                ANNULLA
+            </button>
+
+            <button id="confirmationConfirm">
+                CONFERMA
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<footer>
+
+    <span id="saveStatus">
+        Dati salvati automaticamente
+    </span>
+
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+    "name": "Basket Stats",
+    "short_name": "Basket Stats",
+    "start_url": "./",
+    "display": "standalone",
+    "background_color": "#f1f3f5",
+    "theme_color": "#111111",
+    "orientation": "landscape"
+}
