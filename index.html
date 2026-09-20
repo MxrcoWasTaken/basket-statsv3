@@ -45,6 +45,7 @@
     <div class="top-actions">
         <button id="previousQuarter">‹</button>
         <button id="nextQuarter">›</button>
+        <button id="undoAction" class="undo-button">↶ ANNULLA</button>
         <button id="exportPdf" class="export-button">ESPORTA PDF</button>
         <button id="newGame" class="danger-button">NUOVA PARTITA</button>
     </div>
@@ -93,10 +94,13 @@
                         <th>PTS</th>
                         <th>2P</th>
                         <th>2PA</th>
+                        <th>2P%</th>
                         <th>3P</th>
                         <th>3PA</th>
+                        <th>3P%</th>
                         <th>TL</th>
                         <th>TLA</th>
+                        <th>TL%</th>
                         <th>REB</th>
                         <th>AST</th>
                         <th>STL</th>
@@ -115,6 +119,37 @@
 
         </div>
 
+        <div class="team-stats">
+        <div class="team-stats-title">STATISTICHE DI SQUADRA</div>
+
+            <div class="team-stats-wrapper">
+                <table class="team-stats-table">
+                    <thead>
+                        <tr>
+                            <th>PTS</th>
+                            <th>2P</th>
+                            <th>2PA</th>
+                            <th>2P%</th>
+                            <th>3P</th>
+                            <th>3PA</th>
+                            <th>3P%</th>
+                            <th>TL</th>
+                            <th>TLA</th>
+                            <th>TL%</th>
+                            <th>REB</th>
+                            <th>AST</th>
+                            <th>STL</th>
+                            <th>BLK</th>
+                            <th>TO</th>
+                            <th>PF</th>
+                            <th>CP</th>
+                            <th>PPR</th>
+                        </tr>
+                    </thead>
+                    <tbody id="homeTeamStatsBody"></tbody>
+                </table>
+            </div>
+        </div>
         <button id="addHomePlayer" class="add-player-button">
             + AGGIUNGI GIOCATORE
         </button>
@@ -162,10 +197,13 @@
                         <th>PTS</th>
                         <th>2P</th>
                         <th>2PA</th>
+                        <th>2P%</th>
                         <th>3P</th>
                         <th>3PA</th>
+                        <th>3P%</th>
                         <th>TL</th>
                         <th>TLA</th>
+                        <th>TL%</th>
                         <th>REB</th>
                         <th>AST</th>
                         <th>STL</th>
@@ -184,6 +222,37 @@
 
         </div>
 
+        <div class="team-stats">
+    <div class="team-stats-title">STATISTICHE DI SQUADRA</div>
+
+            <div class="team-stats-wrapper">
+                <table class="team-stats-table">
+                    <thead>
+                        <tr>
+                            <th>PTS</th>
+                            <th>2P</th>
+                            <th>2PA</th>
+                            <th>2P%</th>
+                            <th>3P</th>
+                            <th>3PA</th>
+                            <th>3P%</th>
+                            <th>TL</th>
+                            <th>TLA</th>
+                            <th>TL%</th>
+                            <th>REB</th>
+                            <th>AST</th>
+                            <th>STL</th>
+                            <th>BLK</th>
+                            <th>TO</th>
+                            <th>PF</th>
+                            <th>CP</th>
+                            <th>PPR</th>
+                        </tr>
+                    </thead>
+                    <tbody id="awayTeamStatsBody"></tbody>
+                </table>
+            </div>
+        </div>
         <button id="addAwayPlayer" class="add-player-button">
             + AGGIUNGI GIOCATORE
         </button>
@@ -354,6 +423,11 @@
             <button id="turnoverScoreButton" class="choice-button turnover">
                 <strong>PALLA RECUPERATA</strong>
                 <small>Punti dopo recupero palla</small>
+            </button>
+
+            <button id="fastBreakAndTurnoverScoreButton" class="choice-button both">
+                <strong>CONTROPIEDE + PALLA RECUPERATA</strong>
+                <small>Entrambe le situazioni</small>
             </button>
 
         </div>
