@@ -199,6 +199,105 @@ function getTeamScore(teamKey) {
         );
 }
 
+function shootingPercentage(made, attempted) {
+    if (attempted === 0) {
+        return "—";
+    }
+
+    return `${((made / attempted) * 100).toFixed(1)}%`;
+}
+
+function getTeamStats(teamKey) {
+    const team = getTeam(teamKey);
+
+    return team.players.reduce((totals, player) => {
+        totals.points += player.stats.points;
+        totals.twoPM += player.stats.twoPM;
+        totals.twoPA += player.stats.twoPA;
+        totals.threePM += player.stats.threePM;
+        totals.threePA += player.stats.threePA;
+        totals.ftm += player.stats.ftm;
+        totals.fta += player.stats.fta;
+        totals.rebounds += player.stats.rebounds;
+        totals.assists += player.stats.assists;
+        totals.steals += player.stats.steals;
+        totals.blocks += player.stats.blocks;
+        totals.turnovers += player.stats.turnovers;
+        totals.fouls += player.stats.fouls;
+        totals.fastBreakPoints += player.stats.fastBreakPoints;
+        totals.pointsOffTurnover += player.stats.pointsOffTurnover;
+
+        return totals;
+    }, {
+        points: 0,
+        twoPM: 0,
+        twoPA: 0,
+        threePM: 0,
+        threePA: 0,
+        ftm: 0,
+        fta: 0,
+        rebounds: 0,
+        assists: 0,
+        steals: 0,
+        blocks: 0,
+        turnovers: 0,
+        fouls: 0,
+        fastBreakPoints: 0,
+        pointsOffTurnover: 0
+    });
+}
+
+function renderTeamStats(teamKey, bodyId) {
+    const stats = getTeamStats(teamKey);
+    const body = document.getElementById(bodyId);
+
+    body.innerHTML = "";
+
+    const tr = document.createElement("tr");
+
+    tr.appendChild(statCell(stats.points));
+    tr.appendChild(statCell(stats.twoPM));
+    tr.appendChild(statCell(stats.twoPA));
+    tr.appendChild(
+        statCell(
+            shootingPercentage(
+                stats.twoPM,
+                stats.twoPA
+            )
+        )
+    );
+    tr.appendChild(statCell(stats.threePM));
+    tr.appendChild(statCell(stats.threePA));
+    tr.appendChild(
+        statCell(
+            shootingPercentage(
+                stats.threePM,
+                stats.threePA
+            )
+        )
+    );
+    tr.appendChild(statCell(stats.ftm));
+    tr.appendChild(statCell(stats.fta));
+    tr.appendChild(
+        statCell(
+            shootingPercentage(
+                stats.ftm,
+                stats.fta
+            )
+        )
+    );
+    tr.appendChild(statCell(stats.rebounds));
+    tr.appendChild(statCell(stats.assists));
+    tr.appendChild(statCell(stats.steals));
+    tr.appendChild(statCell(stats.blocks));
+    tr.appendChild(statCell(stats.turnovers));
+    tr.appendChild(statCell(stats.fouls));
+    tr.appendChild(statCell(stats.fastBreakPoints));
+    tr.appendChild(statCell(stats.pointsOffTurnover));
+
+    body.appendChild(tr);
+}
+
 
 
 /* =========================================================
@@ -206,42 +305,22 @@ function getTeamScore(teamKey) {
    ========================================================= */
 
 function render() {
+    document.getElementById("homeTeamName").value = game.homeTeam.name;
+    document.getElementById("awayTeamName").value = game.awayTeam.name;
 
-    document.getElementById(
-        "homeTeamName"
-    ).value =
-        game.homeTeam.name;
-
-
-    document.getElementById(
-        "awayTeamName"
-    ).value =
-        game.awayTeam.name;
-
-
-    document.getElementById(
-        "quarterDisplay"
-    ).textContent =
+    document.getElementById("quarterDisplay").textContent =
         game.quarter <= 4
             ? `${game.quarter}°`
             : `OT${game.quarter - 4}`;
 
+    renderTeam("homeTeam", "homePlayersBody");
+    renderTeam("awayTeam", "awayPlayersBody");
 
-    renderTeam(
-        "homeTeam",
-        "homePlayersBody"
-    );
-
-
-    renderTeam(
-        "awayTeam",
-        "awayPlayersBody"
-    );
-
+    renderTeamStats("homeTeam", "homeTeamStatsBody");
+    renderTeamStats("awayTeam", "awayTeamStatsBody");
 
     updateScores();
 }
-
 
 function updateScores() {
 
@@ -341,23 +420,53 @@ function renderTeam(teamKey, bodyId) {
         // PTS
         tr.appendChild(statCell(player.stats.points));
 
-        // 2P - SOLO CANESTRI REALIZZATI
+        // 2P
         tr.appendChild(statCell(player.stats.twoPM));
 
-        // 2PA - TIRI DA 2 TENTATI
+        // 2PA
         tr.appendChild(statCell(player.stats.twoPA));
 
-        // 3P - SOLO TRIPLE REALIZZATE
+        // 2P%
+        tr.appendChild(
+            statCell(
+                shootingPercentage(
+                    player.stats.twoPM,
+                    player.stats.twoPA
+                )
+            )
+        );
+
+        // 3P
         tr.appendChild(statCell(player.stats.threePM));
 
-        // 3PA - TRIPLE TENTATE
+        // 3PA
         tr.appendChild(statCell(player.stats.threePA));
 
-        // TL - TIRI LIBERI REALIZZATI
+        // 3P%
+        tr.appendChild(
+            statCell(
+                shootingPercentage(
+                    player.stats.threePM,
+                    player.stats.threePA
+                )
+            )
+        );
+
+        // TL
         tr.appendChild(statCell(player.stats.ftm));
 
-        // TLA - TIRI LIBERI TENTATI
+        // TLA
         tr.appendChild(statCell(player.stats.fta));
+
+        // TL%
+        tr.appendChild(
+            statCell(
+                shootingPercentage(
+                    player.stats.ftm,
+                    player.stats.fta
+                )
+            )
+        );
 
         // REB
         tr.appendChild(statCell(player.stats.rebounds));
@@ -764,7 +873,6 @@ function confirmScoring(type) {
         return;
     }
 
-
     const points =
         scoringChoiceType === "two"
             ? 2
@@ -774,6 +882,10 @@ function confirmScoring(type) {
     saveHistory();
 
 
+    // ================================
+    // CANESTRO DA 2
+    // ================================
+
     if (scoringChoiceType === "two") {
 
         player.stats.twoPM++;
@@ -781,25 +893,47 @@ function confirmScoring(type) {
 
     } else {
 
+        // ================================
+        // CANESTRO DA 3
+        // ================================
+
         player.stats.threePM++;
         player.stats.threePA++;
     }
 
 
+    // ================================
+    // PUNTI TOTALI
+    // ================================
+
     player.stats.points += points;
 
 
-    if (type === "fastBreak") {
+    // ================================
+    // CONTROPIEDE
+    // ================================
 
-        player.stats.fastBreakPoints +=
-            points;
+    if (
+        type === "fastBreak" ||
+        type === "fastBreakAndTurnover"
+    ) {
+
+        player.stats.fastBreakPoints += points;
+
     }
 
 
-    if (type === "turnover") {
+    // ================================
+    // PALLA RECUPERATA
+    // ================================
 
-        player.stats.pointsOffTurnover +=
-            points;
+    if (
+        type === "turnover" ||
+        type === "fastBreakAndTurnover"
+    ) {
+
+        player.stats.pointsOffTurnover += points;
+
     }
 
 
@@ -1361,6 +1495,16 @@ function initialize() {
             )
     );
 
+    document.getElementById(
+        "fastBreakAndTurnoverScoreButton"
+    ).addEventListener(
+        "click",
+        () =>
+            confirmScoring(
+                "fastBreakAndTurnover"
+            )
+    );
+
 
     /* PALLA RECUPERATA */
 
@@ -1597,6 +1741,8 @@ function initialize() {
         }
     );
 
+    document.getElementById("undoAction").addEventListener("click", undoAction);
+
 }
 
 function exportPDF() {
@@ -1612,6 +1758,18 @@ function exportPDF() {
 
     const homeScore = getTeamScore("homeTeam");
     const awayScore = getTeamScore("awayTeam");
+
+    // ================================
+    // FUNZIONE PERCENTUALI
+    // ================================
+
+    function pdfShootingPercentage(made, attempted) {
+        if (attempted === 0) {
+            return "—";
+        }
+
+        return `${((made / attempted) * 100).toFixed(1)}%`;
+    }
 
     // ================================
     // TITOLO
@@ -1646,7 +1804,7 @@ function exportPDF() {
     });
 
     // ================================
-    // TABELLA
+    // INTESTAZIONI
     // ================================
 
     const headers = [
@@ -1655,10 +1813,13 @@ function exportPDF() {
         "PTS",
         "2P",
         "2PA",
+        "2P%",
         "3P",
         "3PA",
+        "3P%",
         "TL",
         "TLA",
+        "TL%",
         "REB",
         "AST",
         "STL",
@@ -1669,17 +1830,74 @@ function exportPDF() {
         "PPR"
     ];
 
+    const teamStatsHeaders = [
+        "PTS",
+        "2P",
+        "2PA",
+        "2P%",
+        "3P",
+        "3PA",
+        "3P%",
+        "TL",
+        "TLA",
+        "TL%",
+        "REB",
+        "AST",
+        "STL",
+        "BLK",
+        "TO",
+        "PF",
+        "CP",
+        "PPR"
+    ];
+
+    // ================================
+    // RIGHE GIOCATORI
+    // ================================
+
     function createRows(teamKey) {
         return getTeam(teamKey).players.map(player => [
             `#${player.number} ${player.name}`,
+
             player.stats.minutes,
             player.stats.points,
+
+            // 2P
             player.stats.twoPM,
+
+            // 2PA
             player.stats.twoPA,
+
+            // 2P%
+            pdfShootingPercentage(
+                player.stats.twoPM,
+                player.stats.twoPA
+            ),
+
+            // 3P
             player.stats.threePM,
+
+            // 3PA
             player.stats.threePA,
+
+            // 3P%
+            pdfShootingPercentage(
+                player.stats.threePM,
+                player.stats.threePA
+            ),
+
+            // TL
             player.stats.ftm,
+
+            // TLA
             player.stats.fta,
+
+            // TL%
+            pdfShootingPercentage(
+                player.stats.ftm,
+                player.stats.fta
+            ),
+
             player.stats.rebounds,
             player.stats.assists,
             player.stats.steals,
@@ -1691,105 +1909,187 @@ function exportPDF() {
         ]);
     }
 
-    let currentY = 30;
+    // ================================
+    // STATISTICHE DI SQUADRA
+    // ================================
+
+    function createTeamStatsRow(teamKey) {
+        const stats = getTeamStats(teamKey);
+
+        return [[
+            stats.points,
+
+            // 2P
+            stats.twoPM,
+
+            // 2PA
+            stats.twoPA,
+
+            // 2P%
+            pdfShootingPercentage(
+                stats.twoPM,
+                stats.twoPA
+            ),
+
+            // 3P
+            stats.threePM,
+
+            // 3PA
+            stats.threePA,
+
+            // 3P%
+            pdfShootingPercentage(
+                stats.threePM,
+                stats.threePA
+            ),
+
+            // TL
+            stats.ftm,
+
+            // TLA
+            stats.fta,
+
+            // TL%
+            pdfShootingPercentage(
+                stats.ftm,
+                stats.fta
+            ),
+
+            stats.rebounds,
+            stats.assists,
+            stats.steals,
+            stats.blocks,
+            stats.turnovers,
+            stats.fouls,
+            stats.fastBreakPoints,
+            stats.pointsOffTurnover
+        ]];
+    }
+
+    // ================================
+    // DISEGNA SQUADRA
+    // ================================
+
+    function drawTeam(teamKey, teamName, score, startY) {
+
+        let currentY = startY;
+
+        // Nome squadra
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+
+        doc.text(
+            `${teamName} — ${score} PUNTI`,
+            14,
+            currentY
+        );
+
+        currentY += 4;
+
+        // Tabella giocatori
+        doc.autoTable({
+            startY: currentY,
+            head: [headers],
+            body: createRows(teamKey),
+
+            theme: "grid",
+
+            styles: {
+                font: "helvetica",
+                fontSize: 7,
+                cellPadding: 2,
+                halign: "center",
+                valign: "middle"
+            },
+
+            headStyles: {
+                fontStyle: "bold",
+                halign: "center"
+            },
+
+            columnStyles: {
+                0: {
+                    halign: "left",
+                    cellWidth: 38
+                }
+            },
+
+            margin: {
+                left: 10,
+                right: 10
+            }
+        });
+
+        currentY = doc.lastAutoTable.finalY + 5;
+
+        // ================================
+        // STATISTICHE DI SQUADRA
+        // ================================
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(10);
+
+        doc.text(
+            "STATISTICHE DI SQUADRA",
+            14,
+            currentY
+        );
+
+        currentY += 2;
+
+        doc.autoTable({
+            startY: currentY,
+            head: [teamStatsHeaders],
+            body: createTeamStatsRow(teamKey),
+
+            theme: "grid",
+
+            styles: {
+                font: "helvetica",
+                fontSize: 7,
+                cellPadding: 2,
+                halign: "center",
+                valign: "middle",
+                fontStyle: "bold"
+            },
+
+            headStyles: {
+                fontStyle: "bold",
+                halign: "center"
+            },
+
+            margin: {
+                left: 10,
+                right: 10
+            }
+        });
+
+        return doc.lastAutoTable.finalY + 12;
+    }
 
     // ================================
     // CASA
     // ================================
 
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
+    let currentY = 30;
 
-    doc.text(
-        `${game.homeTeam.name} — ${homeScore} PUNTI`,
-        14,
+    currentY = drawTeam(
+        "homeTeam",
+        game.homeTeam.name,
+        homeScore,
         currentY
     );
-
-    currentY += 4;
-
-    doc.autoTable({
-        startY: currentY,
-        head: [headers],
-        body: createRows("homeTeam"),
-
-        theme: "grid",
-
-        styles: {
-            font: "helvetica",
-            fontSize: 7,
-            cellPadding: 2,
-            halign: "center",
-            valign: "middle"
-        },
-
-        headStyles: {
-            fontStyle: "bold",
-            halign: "center"
-        },
-
-        columnStyles: {
-            0: {
-                halign: "left",
-                cellWidth: 38
-            }
-        },
-
-        margin: {
-            left: 10,
-            right: 10
-        }
-    });
-
-    currentY = doc.lastAutoTable.finalY + 12;
 
     // ================================
     // TRASFERTA
     // ================================
 
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
-
-    doc.text(
-        `${game.awayTeam.name} — ${awayScore} PUNTI`,
-        14,
+    currentY = drawTeam(
+        "awayTeam",
+        game.awayTeam.name,
+        awayScore,
         currentY
     );
-
-    currentY += 4;
-
-    doc.autoTable({
-        startY: currentY,
-        head: [headers],
-        body: createRows("awayTeam"),
-
-        theme: "grid",
-
-        styles: {
-            font: "helvetica",
-            fontSize: 7,
-            cellPadding: 2,
-            halign: "center",
-            valign: "middle"
-        },
-
-        headStyles: {
-            fontStyle: "bold",
-            halign: "center"
-        },
-
-        columnStyles: {
-            0: {
-                halign: "left",
-                cellWidth: 38
-            }
-        },
-
-        margin: {
-            left: 10,
-            right: 10
-        }
-    });
 
     // ================================
     // PIÈ DI PAGINA
