@@ -2773,3 +2773,53 @@ footer {
 .export-button:active {
     transform: scale(.94);
 }
+
+.team-stats {
+    margin-top: 18px;
+    margin-bottom: 20px;
+    background: #f1f4f6;
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.team-stats-title {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+}
+
+.team-stats-wrapper {
+    overflow-x: auto;
+}
+
+.team-stats-table {
+    width: 100%;
+    min-width: 1200px;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.team-stats-table th {
+    background: #222;
+    color: white;
+    padding: 10px 6px;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.team-stats-table td {
+    background: white;
+    padding: 12px 6px;
+    font-size: 18px;
+    font-weight: 800;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.undo-button {
+    background: #f0a500;
+    color: #111;
+    font-weight: 800;
+}
