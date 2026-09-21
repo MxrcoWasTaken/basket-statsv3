@@ -1,3 +1,25 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import {
+    getDatabase,
+    ref,
+    set
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBrLcwJMNyXDxikmAVppALfiOAJ4Kn4D_g",
+    authDomain: "basket-stats-85cf7.firebaseapp.com",
+    databaseURL: "https://basket-stats-85cf7-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "basket-stats-85cf7",
+    storageBucket: "basket-stats-85cf7.firebasestorage.app",
+    messagingSenderId: "489017171878",
+    appId: "1:489017171878:web:79fc110e0ddb6d0733967"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const database = getDatabase(firebaseApp);
+
+const liveGameRef = ref(database, "liveGame");
+
 const STORAGE_KEY = "basketStatsGameV2";
 
 let game = {
@@ -16,6 +38,14 @@ let game = {
     history: []
 };
 
+async function syncGameToFirebase() {
+    try {
+        await set(liveGameRef, game);
+        console.log("🔥 Dati sincronizzati con Firebase");
+    } catch (error) {
+        console.error("❌ Errore sincronizzazione Firebase:", error);
+    }
+}
 
 let selectedPlayerId = null;
 let selectedTeamKey = null;
@@ -122,12 +152,8 @@ function createDefaultGame() {
    ========================================================= */
 
 function saveGame() {
-
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(game)
-    );
-
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(game));
+    syncGameToFirebase();
 }
 
 
