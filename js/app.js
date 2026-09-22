@@ -1435,7 +1435,7 @@ function initialize() {
 
     render();
 
-
+    syncGameToFirebase();
     /* STATISTICHE */
 
     document
