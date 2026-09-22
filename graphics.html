@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Basket Graphics Test</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            width: 100vw;
+            height: 100vh;
+
+            background: transparent;
+
+            font-family: Arial, Helvetica, sans-serif;
+
+            overflow: hidden;
+        }
+
+
+        /* =====================================================
+           GRAPHIC
+           ===================================================== */
+
+        .scoreboard {
+
+            position: absolute;
+
+            top: 40px;
+            left: 50%;
+
+            transform: translateX(-50%);
+
+            width: 900px;
+            height: 150px;
+
+            display: flex;
+            align-items: center;
+
+            background: rgba(10, 15, 25, 0.95);
+
+            border-radius: 20px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 10px 40px rgba(0, 0, 0, 0.35);
+        }
+
+
+        /* =====================================================
+           TEAM
+           ===================================================== */
+
+        .team {
+
+            flex: 1;
+
+            height: 100%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 20px;
+
+            color: white;
+        }
+
+
+        .team-name {
+
+            font-size: 30px;
+
+            font-weight: 800;
+
+            letter-spacing: 1px;
+        }
+
+
+        .score {
+
+            font-size: 64px;
+
+            font-weight: 900;
+
+            line-height: 1;
+        }
+
+
+        /* =====================================================
+           CENTRO
+           ===================================================== */
+
+        .center {
+
+            width: 170px;
+
+            height: 100%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: white;
+
+            color: #111;
+        }
+
+
+        .quarter {
+
+            font-size: 24px;
+
+            font-weight: 900;
+
+            margin-bottom: 8px;
+        }
+
+
+        .live {
+
+            font-size: 13px;
+
+            font-weight: 800;
+
+            letter-spacing: 2px;
+
+            color: #e53935;
+        }
+
+
+        .live-dot {
+
+            display: inline-block;
+
+            width: 9px;
+            height: 9px;
+
+            border-radius: 50%;
+
+            background: #e53935;
+
+            margin-right: 5px;
+        }
+
+
+        /* =====================================================
+           INFO
+           ===================================================== */
+
+        .info {
+
+            position: absolute;
+
+            top: 210px;
+            left: 50%;
+
+            transform: translateX(-50%);
+
+            padding: 10px 18px;
+
+            background: rgba(10, 15, 25, 0.85);
+
+            color: white;
+
+            border-radius: 10px;
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            opacity: 0.9;
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <div class="scoreboard">
+
+
+        <div class="team">
+
+            <div
+                class="team-name"
+                id="homeName"
+            >
+                CASA
+            </div>
+
+            <div
+                class="score"
+                id="homeScore"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="center">
+
+            <div
+                class="quarter"
+                id="quarter"
+            >
+                1°
+            </div>
+
+            <div class="live">
+
+                <span class="live-dot"></span>
+
+                LIVE
+
+            </div>
+
+        </div>
+
+
+        <div class="team">
+
+            <div
+                class="score"
+                id="awayScore"
+            >
+                0
+            </div>
+
+            <div
+                class="team-name"
+                id="awayName"
+            >
+                TRASFERTA
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <div
+        class="info"
+        id="connectionStatus"
+    >
+        Connessione...
+    </div>
+
+
+
+    <!-- =====================================================
+         FIREBASE
+         ===================================================== -->
+
+    <script type="module">
+
+        import { initializeApp }
+
+            from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+
+        import {
+
+            getDatabase,
+            ref,
+            onValue
+
+        } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+
+        const firebaseConfig = {
+
+            apiKey:
+                "AIzaSyBrLcwJMNyXDxikmAVppALfiOAJ4Kn4D_g",
+
+            authDomain:
+                "basket-stats-85cf7.firebaseapp.com",
+
+            databaseURL:
+                "https://basket-stats-85cf7-default-rtdb.europe-west1.firebasedatabase.app",
+
+            projectId:
+                "basket-stats-85cf7",
+
+            storageBucket:
+                "basket-stats-85cf7.firebasestorage.app",
+
+            messagingSenderId:
+                "489017171878",
+
+            appId:
+                "1:489017171878:web:79fc110e0ddb6d0733967"
+        };
+
+
+        const app =
+            initializeApp(firebaseConfig);
+
+
+        const database =
+            getDatabase(app);
+
+
+        const liveGameRef =
+            ref(database, "liveGame");
+
+
+
+        /* =====================================================
+           RICEZIONE DATI
+           ===================================================== */
+
+        onValue(
+
+            liveGameRef,
+
+            (snapshot) => {
+
+                const game =
+                    snapshot.val();
+
+
+                if (!game) {
+
+                    document.getElementById(
+                        "connectionStatus"
+                    ).textContent =
+                        "Nessuna partita";
+
+                    return;
+                }
+
+
+                /* ---------------------------------------------
+                   SQUADRE
+                   --------------------------------------------- */
+
+                document.getElementById(
+                    "homeName"
+                ).textContent =
+                    game.homeTeam?.name || "CASA";
+
+
+                document.getElementById(
+                    "awayName"
+                ).textContent =
+                    game.awayTeam?.name || "TRASFERTA";
+
+
+                /* ---------------------------------------------
+                   PUNTEGGI
+                   --------------------------------------------- */
+
+                let homeScore = 0;
+
+                let awayScore = 0;
+
+
+                if (game.homeTeam?.players) {
+
+                    Object.values(
+                        game.homeTeam.players
+                    ).forEach(player => {
+
+                        homeScore +=
+                            Number(
+                                player.stats?.points || 0
+                            );
+
+                    });
+                }
+
+
+                if (game.awayTeam?.players) {
+
+                    Object.values(
+                        game.awayTeam.players
+                    ).forEach(player => {
+
+                        awayScore +=
+                            Number(
+                                player.stats?.points || 0
+                            );
+
+                    });
+                }
+
+
+                document.getElementById(
+                    "homeScore"
+                ).textContent =
+                    homeScore;
+
+
+                document.getElementById(
+                    "awayScore"
+                ).textContent =
+                    awayScore;
+
+
+                /* ---------------------------------------------
+                   QUARTO
+                   --------------------------------------------- */
+
+                let quarterText;
+
+
+                if (game.quarter <= 4) {
+
+                    quarterText =
+                        `${game.quarter}°`;
+
+                } else {
+
+                    quarterText =
+                        `OT${game.quarter - 4}`;
+
+                }
+
+
+                document.getElementById(
+                    "quarter"
+                ).textContent =
+                    quarterText;
+
+
+                /* ---------------------------------------------
+                   STATO
+                   --------------------------------------------- */
+
+                document.getElementById(
+                    "connectionStatus"
+                ).textContent =
+                    "● DATI LIVE";
+
+            },
+
+            (error) => {
+
+                console.error(
+                    "Errore Firebase:",
+                    error
+                );
+
+
+                document.getElementById(
+                    "connectionStatus"
+                ).textContent =
+                    "Errore connessione";
+            }
+
+        );
+
+    </script>
+
+</body>
+
+</html>
